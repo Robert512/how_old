@@ -73,6 +73,8 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 
 	
+	
+	//选择好图片返回时调用，加载选中的图片
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		
@@ -89,7 +91,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				mCurrentPhotoStr = cursor.getString(idx);
 				cursor.close();
 				
-				//图片二进制获取的数据不能大于3M，根据照片的尺寸来压缩
+				//图片二进制获取的数据不能大于3M，根据照片的尺寸来压缩（这里其实要求是1M）
 				resizePhoto();
 				
 				mPhoto.setImageBitmap(mPhotoImg);
@@ -101,6 +103,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		super.onActivityResult(requestCode, resultCode, intent);
 	}
 	
+	
+	//压缩图片
 	private void resizePhoto()
 	{
 		Log.d("TAG","resizePhoto");
@@ -137,6 +141,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				Log.d("TAG","sucess2");
 				JSONObject rs = (JSONObject) msg.obj;
 				
+				//绘图
 				prepareRsBitmap(rs);
 				
 				mPhoto.setImageBitmap(mPhotoImg);
@@ -175,6 +180,8 @@ public class MainActivity extends Activity implements OnClickListener {
 			startActivityForResult(intent, PICK_CODE);
 			Log.d("TAG","getImage2");
 			break;   //真的太他妈坑了！！！
+			
+			
 		case R.id.id_detect:
 			Log.d("TAG","detect1");
 			mWaiting.setVisibility(View.VISIBLE);

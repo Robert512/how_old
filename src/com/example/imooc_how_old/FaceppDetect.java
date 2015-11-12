@@ -28,6 +28,8 @@ public class FaceppDetect {
 			@Override
 			public void run() {
 				try{
+					
+					//将图片变成二进制发送过去
 					HttpRequests requests = new HttpRequests(Constant.KEY,Constant.SECRET, true,true );
 					
 					Bitmap bmSmall = Bitmap.createBitmap(bm,0,0,bm.getWidth(),bm.getHeight());
@@ -39,6 +41,8 @@ public class FaceppDetect {
 					PostParameters  params = new PostParameters();
 					params.setImg(arrays);
 					
+					
+					//这里就调用了Face++的类，通过params来获取jsonObject了
 					
 					JSONObject jsonObject = requests.detectionDetect(params);
 					
