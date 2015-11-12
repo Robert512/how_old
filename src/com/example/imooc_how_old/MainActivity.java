@@ -1,5 +1,9 @@
 package com.example.imooc_how_old;
 
+import org.json.JSONObject;
+
+import com.facepp.error.FaceppParseException;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -107,6 +111,21 @@ public class MainActivity extends Activity implements OnClickListener {
 			Intent intent = new Intent(Intent.ACTION_PICK);
 			intent.setType("image/*");
 			startActivityForResult(intent, PICK_CODE);
+		case R.id.id_detect:
+			FaceppDetect.detect(mPhotoImg, new FaceppDetect.CallBack() {
+				
+				@Override
+				public void success(JSONObject result) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void error(FaceppParseException exception) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
 			
 		}
 		
