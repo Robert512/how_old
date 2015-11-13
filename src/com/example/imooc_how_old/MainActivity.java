@@ -1,5 +1,12 @@
 package com.example.imooc_how_old;
 
+
+
+
+import net.youmi.android.AdManager;
+import net.youmi.android.banner.AdSize;
+import net.youmi.android.banner.AdView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,13 +27,17 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements OnClickListener {
+public class MainActivity extends Activity implements OnClickListener{
 
 	
 	private static final int PICK_CODE = 0x110;
@@ -45,12 +56,23 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		AdManager.getInstance(this).init("699cbbbc9642657a","f73bd865a6b5e7fb", false);
+
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 		
 		initViews();
 		initEvents();
 		
 		mPaint = new Paint();
+		
+		//实例化广告条
+	    AdView adView = new AdView(this, AdSize.FIT_SCREEN);
+	    //获取要嵌入广告条的布局
+	    LinearLayout adLayout=(LinearLayout)findViewById(R.id.adLayout);
+	    //将广告条加入到布局中
+	    adLayout.addView(adView);
+
 		
 	}
 
@@ -69,6 +91,9 @@ public class MainActivity extends Activity implements OnClickListener {
 	private void initEvents() {
 		mGetImage.setOnClickListener(this);
 		mDetect.setOnClickListener(this);
+		//mGetImage.setOnTouchListener(this);
+		//mDetect.setOnTouchListener(this);
+		
 		
 	}
 
@@ -95,7 +120,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				resizePhoto();
 				
 				mPhoto.setImageBitmap(mPhotoImg);
-				mTip.setText("Click Detect ==>");
+				mTip.setText("点击检测吧   ==>");
 				
 			}
 		}
@@ -154,7 +179,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				String errorMsg = (String) msg.obj;
 				if(TextUtils.isEmpty(errorMsg))
 				{
-					mTip.setText("Error.");
+					mTip.setText("检测出错了~");
 				}else
 				{
 					mTip.setText(errorMsg);
@@ -225,6 +250,77 @@ public class MainActivity extends Activity implements OnClickListener {
 		
 	}
 
+	
+	
+	
+	/*@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		switch(v.getId())
+		{
+		case R.id.id_getImage:
+			if(event.getAction() == MotionEvent.ACTION_DOWN)
+			{
+				mGetImage.
+			}
+			
+			Log.d("TAG","getImage1");
+			Intent intent = new Intent(Intent.ACTION_PICK);
+			intent.setType("image/*");
+			startActivityForResult(intent, PICK_CODE);
+			Log.d("TAG","getImage2");
+			break;   //真的太他妈坑了！！！
+			
+			
+		case R.id.id_detect:
+			Log.d("TAG","detect1");
+			mWaiting.setVisibility(View.VISIBLE);
+			
+			
+			if(mCurrentPhotoStr != null && !mCurrentPhotoStr.trim().equals(""))
+			{
+				resizePhoto();
+			}else
+			{
+				mPhotoImg = BitmapFactory.decodeResource(getResources(), R.drawable.t4);
+			}
+			
+			
+			FaceppDetect.detect(mPhotoImg, new FaceppDetect.CallBack() {
+				
+				@Override
+				public void success(JSONObject result) {
+					Log.d("TAG","sucess");
+					Message msg = Message.obtain();
+					msg.what = MSG_SUCESS;
+					msg.obj = result;
+					mHandler.sendMessage(msg);
+					
+				}
+				
+				@Override
+				public void error(FaceppParseException exception) {
+					Log.d("TAG","error");
+					Message msg = Message.obtain();
+					msg.what = MSG_ERROR;
+					msg.obj = exception.getErrorMessage();
+					mHandler.sendMessage(msg);
+					
+				}
+			});
+			break;   //真的太他妈坑了！！！
+		default:
+			break;
+		}
+		
+		
+		return false;
+	}*/
+
+	
+	
+	
+	
+	
 	protected void prepareRsBitmap(JSONObject rs)
 	{
 		
@@ -237,7 +333,14 @@ public class MainActivity extends Activity implements OnClickListener {
 			JSONArray faces = rs.getJSONArray("face");
 			
 			int faceCount = faces.length();
-			mTip.setText("find" + faceCount);
+			
+			if(faceCount == 0)
+			{
+				mTip.setText("没有检测到人脸哦~");
+			}else{
+				mTip.setText("检测到" + faceCount + "张脸");
+			}
+			
 			
 			for(int i=0;i<faceCount;i++)
 			{
@@ -318,6 +421,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		return bitmap;
 	}
 
+
+	
 	
 
 }
