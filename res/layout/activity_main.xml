@@ -23,6 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="选图"
+        android:width="80dp"
         android:background="@drawable/button_selector"  
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
@@ -33,9 +34,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="检测"
+        android:width="80dp"
         android:background="@drawable/button_selector"       
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="10dp"
+        android:layout_marginRight="30dp"
         android:layout_toLeftOf="@id/id_getImage"
         android:id="@+id/id_detect"/>
     

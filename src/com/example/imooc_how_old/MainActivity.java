@@ -120,7 +120,7 @@ public class MainActivity extends Activity implements OnClickListener{
 				resizePhoto();
 				
 				mPhoto.setImageBitmap(mPhotoImg);
-				mTip.setText("点击检测吧   ==>");
+				mTip.setText("点击检测吧   ->");
 				
 			}
 		}
@@ -179,7 +179,7 @@ public class MainActivity extends Activity implements OnClickListener{
 				String errorMsg = (String) msg.obj;
 				if(TextUtils.isEmpty(errorMsg))
 				{
-					mTip.setText("检测出错了~");
+					mTip.setText("检测出错,请检查网络~");
 				}else
 				{
 					mTip.setText(errorMsg);
@@ -253,72 +253,7 @@ public class MainActivity extends Activity implements OnClickListener{
 	
 	
 	
-	/*@Override
-	public boolean onTouch(View v, MotionEvent event) {
-		switch(v.getId())
-		{
-		case R.id.id_getImage:
-			if(event.getAction() == MotionEvent.ACTION_DOWN)
-			{
-				mGetImage.
-			}
-			
-			Log.d("TAG","getImage1");
-			Intent intent = new Intent(Intent.ACTION_PICK);
-			intent.setType("image/*");
-			startActivityForResult(intent, PICK_CODE);
-			Log.d("TAG","getImage2");
-			break;   //真的太他妈坑了！！！
-			
-			
-		case R.id.id_detect:
-			Log.d("TAG","detect1");
-			mWaiting.setVisibility(View.VISIBLE);
-			
-			
-			if(mCurrentPhotoStr != null && !mCurrentPhotoStr.trim().equals(""))
-			{
-				resizePhoto();
-			}else
-			{
-				mPhotoImg = BitmapFactory.decodeResource(getResources(), R.drawable.t4);
-			}
-			
-			
-			FaceppDetect.detect(mPhotoImg, new FaceppDetect.CallBack() {
-				
-				@Override
-				public void success(JSONObject result) {
-					Log.d("TAG","sucess");
-					Message msg = Message.obtain();
-					msg.what = MSG_SUCESS;
-					msg.obj = result;
-					mHandler.sendMessage(msg);
-					
-				}
-				
-				@Override
-				public void error(FaceppParseException exception) {
-					Log.d("TAG","error");
-					Message msg = Message.obtain();
-					msg.what = MSG_ERROR;
-					msg.obj = exception.getErrorMessage();
-					mHandler.sendMessage(msg);
-					
-				}
-			});
-			break;   //真的太他妈坑了！！！
-		default:
-			break;
-		}
-		
-		
-		return false;
-	}*/
 
-	
-	
-	
 	
 	
 	protected void prepareRsBitmap(JSONObject rs)
@@ -336,7 +271,7 @@ public class MainActivity extends Activity implements OnClickListener{
 			
 			if(faceCount == 0)
 			{
-				mTip.setText("没有检测到人脸哦~");
+				mTip.setText("放个正面照试试");
 			}else{
 				mTip.setText("检测到" + faceCount + "张脸");
 			}
@@ -359,14 +294,22 @@ public class MainActivity extends Activity implements OnClickListener{
 				w = w / 100 * bitmap.getWidth();
 				h = h / 100 * bitmap.getHeight();
 				
-				mPaint.setColor(0xffffffff);
-				mPaint.setStrokeWidth(3);
+				
+				  // 消除锯齿
+				mPaint.setAntiAlias(true);
+				mPaint.setColor(0xffffd700);
+				mPaint.setStrokeWidth(4);
+				
+				mPaint.setStyle(Paint.Style.STROKE);
 						
 				//画box
-				canvas.drawLine(x - w /2, y - h /2, x - w / 2, y + h /2, mPaint);
+				/*canvas.drawLine(x - w /2, y - h /2, x - w / 2, y + h /2, mPaint);
 				canvas.drawLine(x - w /2, y - h /2, x + w / 2, y - h /2, mPaint);
 				canvas.drawLine(x + w /2, y + h /2, x - w / 2, y + h /2, mPaint);
-				canvas.drawLine(x + w /2, y + h /2, x + w / 2, y - h /2, mPaint);
+				canvas.drawLine(x + w /2, y + h /2, x + w / 2, y - h /2, mPaint);*/
+				
+				float radius = (float) Math.sqrt((Math.pow((double)w, 2) + Math.pow((double)h, 2))/4);
+				canvas.drawCircle(x, y, radius, mPaint);
 				
 				int age = face.getJSONObject("attribute").getJSONObject("age").getInt("value");
 				String gender = face.getJSONObject("attribute").getJSONObject("age").getString("value");
@@ -382,6 +325,7 @@ public class MainActivity extends Activity implements OnClickListener{
 				{
 					float ratio = Math.max(bitmap.getWidth() * 1.0f/mPhoto.getWidth(), bitmap.getHeight() * 1.0f/mPhoto.getHeight());
 				
+					
 					ageBitmap = Bitmap.createScaledBitmap(ageBitmap, (int)(ageWidth * ratio), (int)(ageHeight * ratio), false);  //这里要用int类型
 	
 					
@@ -389,7 +333,7 @@ public class MainActivity extends Activity implements OnClickListener{
 				
 				canvas.drawBitmap(ageBitmap, x - ageBitmap.getWidth(), y - h/2 - ageBitmap.getHeight(), null);
 				
-						
+				
 				
 				mPhotoImg = bitmap;
 			}
